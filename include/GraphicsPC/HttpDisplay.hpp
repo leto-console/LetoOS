@@ -9,12 +9,12 @@
 #ifndef GRAPHICS_PC_HTTP_DISPLAY_HPP_
 #define GRAPHICS_PC_HTTP_DISPLAY_HPP_
 
-#include "LetoCoreExport.h"
+#include "LetoOSExport.h"
 #include <thread>
 
 #include <Graphics/IDisplay.hpp>
 
-class LETO_CORE_EXPORT HttpDisplay : public IDisplay
+class LETO_OS_EXPORT HttpDisplay : public IDisplay
 {
 protected:
 	std::thread http_server_thread;

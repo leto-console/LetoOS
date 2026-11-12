@@ -9,7 +9,7 @@
 #ifndef GRAPHICS_PC_WIN_DISPLAY_HPP_
 #define GRAPHICS_PC_WIN_DISPLAY_HPP_
 
-#include "LetoCoreExport.h"
+#include "LetoOSExport.h"
 
 #include <Windows.h>
 #include <stdint.h>
@@ -21,7 +21,7 @@
 LRESULT CALLBACK	WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 void				DrawImage(HDC hdc);
 
-struct LETO_CORE_EXPORT WinAPIKeyEvent
+struct LETO_OS_EXPORT WinAPIKeyEvent
 {
 	enum { IDLE, PRESSED, RELEASED, ROTATE_LEFT, ROTATE_RIGHT };
 	uint64_t key;
@@ -30,9 +30,9 @@ struct LETO_CORE_EXPORT WinAPIKeyEvent
 
 constexpr int Mouse_KeyEvent = 7;
 
-extern LETO_CORE_EXPORT std::map<uint64_t, std::deque<WinAPIKeyEvent>> WinAPIEventsMap;
+extern LETO_OS_EXPORT std::map<uint64_t, std::deque<WinAPIKeyEvent>> WinAPIEventsMap;
 
-class LETO_CORE_EXPORT WinDisplay : public IDisplay
+class LETO_OS_EXPORT WinDisplay : public IDisplay
 {
 	friend class SSD1306;
 	const wchar_t*	CLASS_NAME = L"STM32_GAMES";

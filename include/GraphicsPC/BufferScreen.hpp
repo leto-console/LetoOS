@@ -7,14 +7,14 @@
 #ifndef INC_GRAPHICS_PC_BUFFER_SCREEN_HPP_
 #define INC_GRAPHICS_PC_BUFFER_SCREEN_HPP_
 
-#include "LetoCoreExport.h"
+#include "LetoOSExport.h"
 
 #include <stdint.h>
 
 #include <Graphics/IFont.hpp>
 #include <Graphics/IScreen.hpp>
 
-struct LETO_CORE_EXPORT BufferScreen : public IScreen
+struct LETO_OS_EXPORT BufferScreen : public IScreen
 {
 public:
     int width{}, height{};
