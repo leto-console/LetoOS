@@ -210,8 +210,8 @@ if(DEFINED ENV{LETO_PATH})
 	set(LIB_DIR "$ENV{LETO_PATH}/Common/${CMAKE_PRESET_NAME}/lib")
 	set(BIN_DIR "$ENV{LETO_PATH}/Common/${CMAKE_PRESET_NAME}/bin")
 
-	add_leto_library(LetoAPI)
-	add_leto_library(LetoCore)
+	add_leto_library(LetoAPI COMPILE_DEFINITIONS LETOCORE_SHARED)
+	add_leto_library(LetoCore COMPILE_DEFINITIONS LETOCORE_SHARED)
 
 	if (${PRESET_DEFINE_MACRO} STREQUAL "__WIN__")
 		add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
