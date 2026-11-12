@@ -239,7 +239,7 @@ target_link_libraries(${PROJECT_NAME} PUBLIC LetoCore LetoAPI)
 
 # === Подключение подсистемы тестов ===
 # Тесты собираются только если это не целевая платформа STM32
-# if (NOT ${PRESET_DEFINE_MACRO} STREQUAL "__STM32__")
-# 	enable_testing()
-#     add_subdirectory(Tests)
-# endif()
+if (NOT ${PRESET_DEFINE_MACRO} STREQUAL "__STM32__")
+	enable_testing()
+    add_subdirectory(Tests)
+endif()
