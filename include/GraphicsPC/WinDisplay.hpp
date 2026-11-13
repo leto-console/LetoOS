@@ -11,34 +11,10 @@
 
 #include "LetoOSExport.h"
 
-#include <Windows.h>
-#include <stdint.h>
-#include <deque>
-#include <map>
-
 #include <Graphics/IDisplay.hpp>
-
-LRESULT CALLBACK	WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
-void				DrawImage(HDC hdc);
-
-struct LETO_OS_EXPORT WinAPIKeyEvent
-{
-	enum { IDLE, PRESSED, RELEASED, ROTATE_LEFT, ROTATE_RIGHT };
-	uint64_t key;
-	int event;
-};
-
-constexpr int Mouse_KeyEvent = 7;
-
-extern LETO_OS_EXPORT std::map<uint64_t, std::deque<WinAPIKeyEvent>> WinAPIEventsMap;
 
 class LETO_OS_EXPORT WinDisplay : public IDisplay
 {
-	friend class SSD1306;
-	const wchar_t*	CLASS_NAME = L"STM32_GAMES";
-	HINSTANCE		m_hInstance;
-	HWND			m_hWnd;
-
 public:
 	WinDisplay(int width, int height, int scale);
 	~WinDisplay();
@@ -53,6 +29,10 @@ public:
 	bool Init() override;
 	void Loop() override;
     bool Render(IDrawer* drawer) override;
+
+private:
+	void* m_instance;
+	void* m_window;
 };
 
 #endif /* GRAPICS_PC_WIN_DISPLAY_HPP_ */

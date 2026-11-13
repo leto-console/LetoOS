@@ -1,5 +1,6 @@
 #include "Make.hpp"
 
+#include <algorithm>
 #include <cstdio>
 #include <cstdarg>
 #include <cmath>

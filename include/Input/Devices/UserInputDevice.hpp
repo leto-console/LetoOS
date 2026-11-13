@@ -19,8 +19,9 @@
 #include <list>
 #endif
 
-#ifdef _WIN32
-#include <GraphicsPC/WinDisplay.hpp>
+#ifndef __STM32__
+#include <Input/KeyCodePC.hpp>
+#include <GraphicsPC/KeyEventPC.hpp>
 #endif
 
 // Интерфейс устройства пользовательского ввода

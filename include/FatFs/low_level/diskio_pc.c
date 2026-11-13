@@ -7,11 +7,11 @@
 /* storage control modules to the FatFs module with a defined API.       */
 /*-----------------------------------------------------------------------*/
 
-#ifdef _WIN32
+#ifndef __STM32__
 
 #include "ff.h"			/* Basic definitions of FatFs */
 #include "diskio.h"		/* Declarations FatFs MAI */
-#include "disk_img_win.h"
+#include "disk_img_pc.h"
 
 /* Example: Declarations of the platform and disk functions in the project */
 #include <stdio.h>

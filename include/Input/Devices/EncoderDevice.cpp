@@ -49,33 +49,33 @@ void EncoderDevice::Tick()
 
 	lastStateCLK = stateCLK;
 
-#elif defined(__WIN__)
+#else
 
-	if (WinAPIEventsMap.find(key_left) != WinAPIEventsMap.end() &&
-		!WinAPIEventsMap[key_left].empty())
+	if (KeyEventsPCMap.find(key_left) != KeyEventsPCMap.end() &&
+		!KeyEventsPCMap[key_left].empty())
 	{
-		WinAPIKeyEvent& event = WinAPIEventsMap[key_left].front();
-		if (event.event == WinAPIKeyEvent::PRESSED) OnLeftTurn();
-		WinAPIEventsMap[key_left].pop_front();
+		KeyEventPC& event = KeyEventsPCMap[key_left].front();
+		if (event.event == KeyEventPC::PRESSED) OnLeftTurn();
+		KeyEventsPCMap[key_left].pop_front();
 	}
 
-	if (WinAPIEventsMap.find(key_right) != WinAPIEventsMap.end() &&
-		!WinAPIEventsMap[key_right].empty())
+	if (KeyEventsPCMap.find(key_right) != KeyEventsPCMap.end() &&
+		!KeyEventsPCMap[key_right].empty())
 	{
-		WinAPIKeyEvent& event = WinAPIEventsMap[key_right].front();
-		if (event.event == WinAPIKeyEvent::PRESSED) OnRightTurn();
-		WinAPIEventsMap[key_right].pop_front();
+		KeyEventPC& event = KeyEventsPCMap[key_right].front();
+		if (event.event == KeyEventPC::PRESSED) OnRightTurn();
+		KeyEventsPCMap[key_right].pop_front();
 	}
 
 	if (enable_wheel)
 	{
-		if (WinAPIEventsMap.find(Mouse_KeyEvent) != WinAPIEventsMap.end() &&
-		!WinAPIEventsMap[Mouse_KeyEvent].empty())
+		if (KeyEventsPCMap.find(KeyCodePC::MOUSE_WHEEL) != KeyEventsPCMap.end() &&
+		!KeyEventsPCMap[KeyCodePC::MOUSE_WHEEL].empty())
 		{
-			WinAPIKeyEvent& event = WinAPIEventsMap[Mouse_KeyEvent].front();
-			if      (event.event == WinAPIKeyEvent::ROTATE_LEFT)  OnLeftTurn();
-			else if (event.event == WinAPIKeyEvent::ROTATE_RIGHT) OnRightTurn();
-			WinAPIEventsMap[Mouse_KeyEvent].pop_front();
+			KeyEventPC& event = KeyEventsPCMap[KeyCodePC::MOUSE_WHEEL].front();
+			if      (event.event == KeyEventPC::ROTATE_LEFT)  OnLeftTurn();
+			else if (event.event == KeyEventPC::ROTATE_RIGHT) OnRightTurn();
+			KeyEventsPCMap[KeyCodePC::MOUSE_WHEEL].pop_front();
 		}
 	}
 

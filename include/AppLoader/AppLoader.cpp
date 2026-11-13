@@ -111,6 +111,15 @@ bool GetBinary(const char *path, void* bin_info, uint32_t info_size, bool load_i
 	return true;
 }
 
+static void UnloadBinary()
+{
+    if (hLoadedDll)
+    {
+        FreeLibrary(hLoadedDll);
+        hLoadedDll = nullptr;
+    }
+}
+
 #endif
 
 // ======================================================================
@@ -201,6 +210,103 @@ bool GetBinary(const char *path, void* bin_info, uint32_t info_size, bool load_i
 	return false;
 }
 
+static void UnloadBinary()
+{
+    FileHandlerFatFs::ClearPool();
+}
+
+#endif
+
+// ======================================================================
+//                        Реализация для Linux
+// ======================================================================
+
+#ifdef __LINUX__
+
+uint32_t ScanApps(AppInfo* array, uint32_t available)
+{
+    // TODO!!!! : Добавить загрузку игр
+
+    // if (!array || available == 0)
+    //     return 0;
+
+	// FRESULT res;
+    // uint32_t count = 0;
+
+    // const char* base_path = "/";
+
+    // DIR dir;
+    // res = f_opendir(&dir, base_path);
+    // if(res != FR_OK)
+    // {
+    // 	VC_Printf("[SG]f_opendir() failed, res = %d\r\n", RedColor, res);
+    //     return 0;
+    // }
+
+    // FILINFO fileInfo;
+    // while(count < available)
+    // {
+    //     res = f_readdir(&dir, &fileInfo);
+    //     if((res != FR_OK) || (fileInfo.fname[0] == '\0'))
+    //         break;
+
+    //     if (fileInfo.fattrib & AM_DIR)
+    //         continue;
+
+    //     char rel_path[128];
+    //     snprintf(rel_path, sizeof(rel_path), "%s%s", base_path, fileInfo.fname);
+
+    //     if (CheckGame(rel_path, array[count]))
+    //     {
+    //         VC_Printf("[SG] %s\r\n", BlueColor, array[count].en_name);
+    //         count++;
+    //     }
+    // }
+
+    // f_closedir(&dir);
+    // VC_Printf("[SG]Done!\r\n", BlueColor);
+    // return count;
+    return 0;
+}
+
+constexpr uint32_t GRAM_BASE = 0x20016000;
+
+bool GetBinary(const char *path, void* bin_info, uint32_t info_size, bool load_in_memory)
+{
+    // TODO!!!! : Добавить загрузку игр
+
+	// static char static_buffer[256];
+
+	// char* buffer 			= load_in_memory ? (char*)GRAM_BASE	: static_buffer;
+	// uint32_t buffer_size 	= load_in_memory ? 40 * 1024 		: sizeof(static_buffer);
+
+	// FIL file;
+	// FRESULT res;
+	// UINT bytes_read;
+
+	// res = f_open(&file, path, FA_READ);
+	// if (res != FR_OK)
+	// {
+	// 	return false;
+	// }
+
+	// res = f_read(&file, buffer, buffer_size, &bytes_read);
+	// f_close(&file);
+
+	// if (res == FR_OK && bytes_read > 0 &&
+	// 	strncmp(buffer, LETO_EXECUTABLE_TYPE_GAME, 16) == 0)
+	// {
+	// 	memcpy(bin_info, buffer, info_size);
+	// 	return true;
+	// }
+	return false;
+}
+
+static void UnloadBinary()
+{
+    // TODO!!!! : Добавить загрузку игр
+}
+
 #endif
 
 bool CheckGame(const char *path, AppInfo& info)
@@ -281,15 +387,7 @@ void UnloadApplication()
 
     leto_api_v1->Lobby->QuitLobby();
 
-#ifdef _WIN32
-    if (hLoadedDll)
-    {
-        FreeLibrary(hLoadedDll);
-        hLoadedDll = nullptr;
-    }
-#else
-    FileHandlerFatFs::ClearPool();
-#endif
+    UnloadBinary();
 }
 
 // ======================================================================

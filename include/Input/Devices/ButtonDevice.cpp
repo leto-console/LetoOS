@@ -14,7 +14,7 @@
 #include <Utils/FileConfig.hpp>
 #endif
 
-#include <string.h>
+#include <cstring>
 
 const long long DEBOUNCE_MS = 15;
 
@@ -56,17 +56,17 @@ void ButtonDevice::Tick()
 
 	raw = !HAL_GPIO_ReadPin(gpio_port, gpio_pin);
 
-#elif defined (__WIN__)
+#else
 
-	if (WinAPIEventsMap.find(key) != WinAPIEventsMap.end() &&
-		!WinAPIEventsMap[key].empty())
+	if (KeyEventsPCMap.find(key) != KeyEventsPCMap.end() &&
+		!KeyEventsPCMap[key].empty())
 	{
-		WinAPIKeyEvent& event = WinAPIEventsMap[key].front();
+		KeyEventPC& event = KeyEventsPCMap[key].front();
 		int winAPIKeyEvent = event.event;
-		WinAPIEventsMap[key].pop_front();
+		KeyEventsPCMap[key].pop_front();
 
-		if		(winAPIKeyEvent == WinAPIKeyEvent::PRESSED)		raw = true;
-		else if (winAPIKeyEvent == WinAPIKeyEvent::RELEASED)	raw = false;
+		if		(winAPIKeyEvent == KeyEventPC::PRESSED)		raw = true;
+		else if (winAPIKeyEvent == KeyEventPC::RELEASED)	raw = false;
 		else 	return;
 	}
 

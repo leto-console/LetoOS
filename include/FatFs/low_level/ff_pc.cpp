@@ -1,7 +1,7 @@
-#ifdef _WIN32
+#ifndef __STM32__
 
-#include "ff_win.hpp"
-#include "disk_img_win.h"
+#include "ff_pc.hpp"
+#include "disk_img_pc.h"
 
 #include "ff.h"
 

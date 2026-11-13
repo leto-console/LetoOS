@@ -1,7 +1,7 @@
 #ifndef FF_WIN_DEFINED
 #define FF_WIN_DEFINED
 
-#ifdef _WIN32
+#ifndef __STM32__
 
 #include "LetoOSExport.h"
 

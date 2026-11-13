@@ -30,12 +30,6 @@ void TimeUtils::SetStartMs(uint32_t ms)
 
 #endif
 
-#if defined(__WIN__)
-
-#include <Windows.h>
-
-#endif
-
 void TimeUtils::Init(uint32_t count_in_sec)
 {
     static bool inited = false;
@@ -45,7 +39,7 @@ void TimeUtils::Init(uint32_t count_in_sec)
     }
 	TimeUtils::count_in_sec = count_in_sec;
 
-#ifdef USE_HAL_DRIVER
+#ifdef __STM32__
 	HAL_SYSTICK_Config( HAL_RCC_GetHCLKFreq() / count_in_sec );
 
     SCB_DEMCR |= CoreDebug_DEMCR_TRCENA_Msk; // разрешаем использовать счётчик
@@ -57,7 +51,7 @@ void TimeUtils::Init(uint32_t count_in_sec)
 
 uint32_t TimeUtils::GetCurrentMs()
 {
-#ifdef USE_HAL_DRIVER
+#ifdef __STM32__
     return HAL_GetTick() / (count_in_sec / 1000.0f);
 #else	
     return ((uint32_t) duration_cast<milliseconds>(system_clock::now().time_since_epoch()).count() - start_ms); /// (count_in_sec / 1000.0);
@@ -65,7 +59,7 @@ uint32_t TimeUtils::GetCurrentMs()
 }
 uint32_t TimeUtils::GetCurrentMks()
 {
-#ifdef USE_HAL_DRIVER
+#ifdef __STM32__
     return HAL_GetTick() / (count_in_sec / 1000000.0f);
 #else	
     return ((uint32_t) duration_cast<microseconds>(system_clock::now().time_since_epoch()).count() - (uint64_t) start_ms * 1000); /// (count_in_sec / 1000.0);
@@ -74,7 +68,7 @@ uint32_t TimeUtils::GetCurrentMks()
 
 void TimeUtils::SleepMs(uint32_t ms)
 {
-#if defined(__WIN__)
+#ifndef __STM32__
     uint32_t cur_ms = GetCurrentMs();
     while (GetCurrentMs() - cur_ms < ms);
 #endif
@@ -82,7 +76,7 @@ void TimeUtils::SleepMs(uint32_t ms)
 
 void TimeUtils::SleepMks(uint32_t mks)
 {
-#if defined(WIN32)
+#ifndef __STM32__
     uint32_t cur_mks = GetCurrentMks();
     while (GetCurrentMks() - cur_mks < mks);
 #else
