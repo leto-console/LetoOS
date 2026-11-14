@@ -16,6 +16,7 @@
 #include <DrawFunctions/DrawRectangle.hpp>
 
 #include <stdarg.h>
+#include <stdio.h>
 
 /// Количество сохраняемых сообщений
 #define VC_MSGS_COUNT 32

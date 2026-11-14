@@ -8,7 +8,7 @@
 #ifndef SSD1306_SSD1306_QTWINDOW_HPP_
 #define SSD1306_SSD1306_QTWINDOW_HPP_
 
-#ifdef __LINUX__
+#if 0
 
 #include <QApplication>
 #include <QMainWindow>

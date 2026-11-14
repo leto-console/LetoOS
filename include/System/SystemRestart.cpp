@@ -2,7 +2,7 @@
 
 #ifdef USE_HAL_DRIVER
 #include <HAL_include/HAL.hpp>
-#else if defined __WIN__
+#elif defined(__WIN__)
 #include <Windows.h>
 #endif
 
@@ -21,7 +21,8 @@ void SystemRestart()
     {
         __NOP();
     }
-#else if defined(__WIN__)
+#elif defined(__WIN__)
     ExitProcess(0);
 #endif
+    // TODO:: Под Linux без перезагрузки !!!!!
 }

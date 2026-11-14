@@ -27,10 +27,10 @@ public:
     void Draw(IScreen& screen)
     {
         screen.FillScreen(IndigoColor);
-        DrawFunctions::DrawText(screen, { 30, 30 }, message, WhiteColor, RedColor);
-        DrawFunctions::DrawText(screen, { 30, 50 }, restart[0], WhiteColor, BlackColor);
-        DrawFunctions::DrawText(screen, { 30, 60 }, restart[1], WhiteColor, BlackColor);
-        DrawFunctions::DrawText(screen, { 30, 80 }, data, WhiteColor, BlackColor, true);
+        DrawFunctions::DrawString(screen, { 30, 30 }, message, WhiteColor, RedColor);
+        DrawFunctions::DrawString(screen, { 30, 50 }, restart[0], WhiteColor, BlackColor);
+        DrawFunctions::DrawString(screen, { 30, 60 }, restart[1], WhiteColor, BlackColor);
+        DrawFunctions::DrawString(screen, { 30, 80 }, data, WhiteColor, BlackColor, true);
     }
 
     void Loop() { }

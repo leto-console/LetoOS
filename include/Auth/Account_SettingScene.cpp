@@ -40,7 +40,7 @@ void Account_SettingScene::Draw(IScreen& screen)
 		WhiteColor
 	);
 
-	DrawText(screen, { 44, text_y }, cur_account.name.GetOrDefault(), WhiteColor, BlackColor, true, &Default_Font_8x8);
+	DrawString(screen, { 44, text_y }, cur_account.name.GetOrDefault(), WhiteColor, BlackColor, true, &Default_Font_8x8);
 }
 
 bool Account_SettingScene::ProcessInput(const AppEvent& event)

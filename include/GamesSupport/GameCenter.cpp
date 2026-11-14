@@ -43,7 +43,7 @@ void GameCenter::Draw(IScreen& screen)
 {
 	static constexpr StaticText32 title = "------ИГРЫ------";
 
-	DrawFunctions::DrawText(screen, { }, title, WhiteColor, BlackColor);
+	DrawFunctions::DrawString(screen, { }, title, WhiteColor, BlackColor);
 	games_menu.Draw(screen);
 }
 

@@ -5,7 +5,7 @@
  *      Author: Timur
  */
 
-#ifdef __LINUX__
+#if 0
 
 #include "SSD1306/SSD1306_QtWindow.hpp"
 

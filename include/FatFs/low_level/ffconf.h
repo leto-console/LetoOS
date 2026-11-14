@@ -29,7 +29,7 @@
 /* This option switches filtered directory read functions, f_findfirst() and
 /  f_findnext(). (0:Disable, 1:Enable 2:Enable with matching altname[] too) */
 
-#ifdef _WIN32
+#ifndef __STM32__
 #define FF_USE_MKFS		1
 #else
 #define FF_USE_MKFS		0

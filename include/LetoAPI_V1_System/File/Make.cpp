@@ -9,6 +9,9 @@ using namespace FileHandlerWin;
 #elif defined(__STM32__)
 #include "FileHandlerFatFs.hpp"
 using namespace FileHandlerFatFs;
+#elif defined(__LINUX__)
+#include "FileHandlerLinux.hpp"
+using namespace FileHandlerLinux;
 #endif
 
 // ====================================================================================================
