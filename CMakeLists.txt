@@ -1,11 +1,16 @@
-add_compile_definitions(${PRESET_DEFINE_MACRO})
-
 cmake_minimum_required(VERSION 3.10)
+project("LetoOS" C CXX)
+
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
+include(AddLetoLibrary)
 
 set(CMAKE_C_STANDARD 17)
 set(CMAKE_C_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+set(LIB_DIR "$ENV{LETO_PATH}/Common/${CMAKE_PRESET_NAME}/lib")
+set(BIN_DIR "$ENV{LETO_PATH}/Common/${CMAKE_PRESET_NAME}/bin")
 
 file(
 	GLOB C_CPP_COURCES 
@@ -19,96 +24,27 @@ file(
 	"include/*/*/*/*/*.cpp" "include/*/*/*/*/*.c"
 )
 
+add_compile_definitions(${PRESET_DEFINE_MACRO})
+
 if(MSVC)
     add_compile_options(/wd4251)
 endif()
 
-# Функция добавления импортированной библиотеки Leto
-# Использование:
-#   add_leto_library(LetoAPI)
-#   add_leto_library(LetoCore COMPILE_DEFINITIONS <...>)
-#   add_leto_library(LetoAPI LIB_DIR <...> BIN_DIR <...>)
-#   add_leto_library(LetoCore LIB_DIR <...> BIN_DIR <...> COMPILE_DEFINITIONS <...>)
-function(add_leto_library LIB_NAME)
+if(DEFINED ENV{LETO_PATH} AND WIN32)
+    set(LIBRARY_TYPE SHARED)
+else()
+	set(LIBRARY_TYPE STATIC)
+endif()
 
-    # Разбор именованных аргументов
-    set(options "")
-    set(oneValueArgs LIB_DIR BIN_DIR)
-    set(multiValueArgs COMPILE_DEFINITIONS)
-    cmake_parse_arguments(ARG "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
+add_library(${PROJECT_NAME} ${LIBRARY_TYPE} ${C_CPP_COURCES})
 
-	# Если не переданы, используем глобальные переменные
-    if(NOT ARG_LIB_DIR)
-        set(ARG_LIB_DIR "${LIB_DIR}")
-    endif()
-    if(NOT ARG_BIN_DIR)
-        set(ARG_BIN_DIR "${BIN_DIR}")
-    endif()
-
-    # Платформо-зависимые настройки	
-	if("${PRESET_DEFINE_MACRO}" STREQUAL "__STM32__")
-        set(_type STATIC)
-        set(_prefix "lib")
-        set(_ext "a")
-        set(_implib "")
-        set(_location "${ARG_LIB_DIR}/${_prefix}${LIB_NAME}.${_ext}")
-	elseif(WIN32)
-        set(_type SHARED)
-        set(_prefix "")
-        set(_ext "lib")
-        set(_implib "${ARG_LIB_DIR}/${LIB_NAME}.${_ext}")
-        set(_location "${ARG_BIN_DIR}/${LIB_NAME}.dll")
-    elseif(LINUX)
-		set(_type SHARED)
-        set(_prefix "lib")
-        set(_ext "so")
-        set(_implib "")
-        set(_location "${ARG_LIB_DIR}/${_prefix}${LIB_NAME}.${_ext}")
-	elseif(APPLE)
-		set(_type SHARED)
-        set(_prefix "lib")
-        set(_ext "dylib")
-        set(_implib "")
-        set(_location "${ARG_LIB_DIR}/${_prefix}${LIB_NAME}.${_ext}")
-	endif()
-
-    # Создание импортированной цели
-    add_library(${LIB_NAME} ${_type} IMPORTED GLOBAL)
-
-    # Базовые свойства (общие для всех библиотек)
-    set_target_properties(${LIB_NAME} PROPERTIES
-        IMPORTED_LOCATION "${_location}"
-        INTERFACE_INCLUDE_DIRECTORIES "$ENV{LETO_PATH}/${LIB_NAME}/include"
-    )
-
-    # IMPORTED_IMPLIB нужен только для Windows (SHARED)
-    if(_implib)
-        set_target_properties(${LIB_NAME} PROPERTIES
-            IMPORTED_IMPLIB "${_implib}"
-        )
-    endif()
-
-    # Дополнительные compile definitions (если переданы)
-    if(ARG_COMPILE_DEFINITIONS)
-        set_target_properties(${LIB_NAME} PROPERTIES
-            INTERFACE_COMPILE_DEFINITIONS "${ARG_COMPILE_DEFINITIONS}"
-        )
-    endif()
-	
-endfunction()
+if(${LIBRARY_TYPE} STREQUAL "SHARED")
+	target_compile_definitions(${PROJECT_NAME} PRIVATE LETO_OS_SHARED)
+endif()
 
 if("${PRESET_DEFINE_MACRO}" STREQUAL "__STM32__")
-	project("LetoOS" C CXX ASM)
 	file(GLOB HW_COURCES "src/*.cpp" "src/*.c" )
-	add_library(${PROJECT_NAME} STATIC "${C_CPP_COURCES}" "${HW_COURCES}")
-else()
-	project("LetoOS" C CXX)
-	if(DEFINED ENV{LETO_PATH})
-		add_library("${PROJECT_NAME}" SHARED "${C_CPP_COURCES}")
-		target_compile_definitions(${PROJECT_NAME} PRIVATE LETO_OS_SHARED)
-	else()
-		add_library("${PROJECT_NAME}" STATIC "${C_CPP_COURCES}")
-	endif()
+	target_sources(${PROJECT_NAME} PRIVATE "${HW_COURCES}")
 endif()
 
 target_include_directories(${PROJECT_NAME} PUBLIC 
@@ -125,6 +61,8 @@ target_compile_definitions(${PROJECT_NAME} PRIVATE LETO_OS_EXPORT_LIBRARY)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 if (${PRESET_DEFINE_MACRO} STREQUAL "__STM32__")
+	enable_language(ASM)
+
 	target_compile_definitions(${PROJECT_NAME} PRIVATE
 		USE_HAL_DRIVER
 		${MCU_CHIP}
@@ -171,7 +109,7 @@ elseif (${PRESET_DEFINE_MACRO} STREQUAL "__WIN__")
 elseif (${PRESET_DEFINE_MACRO} STREQUAL "__LINUX__")
 
     find_package(SDL2 REQUIRED CONFIG)
-    target_link_libraries(${PROJECT_NAME} PRIVATE SDL2::SDL2)
+    target_link_libraries(${PROJECT_NAME} PUBLIC SDL2::SDL2)
 
 elseif (${PRESET_DEFINE_MACRO} STREQUAL "__TERMUX__")
 
@@ -216,9 +154,6 @@ if(DEFINED ENV{LETO_PATH})
 		"${CMAKE_ARCHIVE_OUTPUT_DIRECTORY}"
 		"$ENV{LETO_PATH}/Common/${CMAKE_PRESET_NAME}/lib/"
 	)
-
-	set(LIB_DIR "$ENV{LETO_PATH}/Common/${CMAKE_PRESET_NAME}/lib")
-	set(BIN_DIR "$ENV{LETO_PATH}/Common/${CMAKE_PRESET_NAME}/bin")
 
 	add_leto_library(LetoAPI COMPILE_DEFINITIONS LETOCORE_SHARED)
 	add_leto_library(LetoCore COMPILE_DEFINITIONS LETOCORE_SHARED)
