@@ -472,7 +472,7 @@ static uint32_t GetTextWidth(
 static const char CTRL_OPEN_SYMBOL = '{';
 static const char CTRL_CLOSE_SYMBOL = '}';
 
-static void DrawText(
+static void DrawString(
     LetoScreen_V1* screen, 
     int32_t x, int32_t y, 
     const char* text, uint32_t length, 
@@ -646,7 +646,7 @@ const GraphicsAPI_V1* Make_GraphicsAPI()
         &DrawEllipse,
         &DrawTriangle,
         &FillScreen,
-        &DrawText,
+        &DrawString,
         &GetTextWidth
     };
     

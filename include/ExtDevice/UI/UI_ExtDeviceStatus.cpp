@@ -37,7 +37,7 @@ void UI_ExtDeviceStatus::Draw(IScreen& screen, Point2_i offset)
 {
     if (!device)
     {
-        leto::graphics::DrawText(IScreen::ToHandle(&screen), position + offset, "Device N/A", font, IndigoColor, BlackColor);
+        leto::graphics::DrawString(IScreen::ToHandle(&screen), position + offset, "Device N/A", font, IndigoColor, BlackColor);
         return;
     }
 
@@ -48,7 +48,7 @@ void UI_ExtDeviceStatus::Draw(IScreen& screen, Point2_i offset)
 
     int name_offset = leto::graphics::GetTextWidth(device->GetName(), font) + leto::graphics::GetTextWidth(" ", font);
     
-    leto::graphics::DrawText(IScreen::ToHandle(&screen), position + offset, device->GetName(), font, WhiteColor, BlackColor);
+    leto::graphics::DrawString(IScreen::ToHandle(&screen), position + offset, device->GetName(), font, WhiteColor, BlackColor);
 
     switch (mode)
     {
@@ -56,21 +56,21 @@ void UI_ExtDeviceStatus::Draw(IScreen& screen, Point2_i offset)
     {
         const StaticText32& txt_status = ui_status[(uint32_t) status].text;
         RGBColor color = ui_status[(uint32_t) status].color;
-        leto::graphics::DrawText(IScreen::ToHandle(&screen), position + offset + Point2_i{ name_offset, 0 }, txt_status, font, color, BlackColor);
+        leto::graphics::DrawString(IScreen::ToHandle(&screen), position + offset + Point2_i{ name_offset, 0 }, txt_status, font, color, BlackColor);
         break;
     }
     case 1:
     {
         char txt[64]{};
         leto::text::FormatText(txt, sizeof(txt), "{ #00ffff }t:{ # }%-5d{ #00ffff }i:{ # }%-5d", device->GetAverageTimeTick(), device->GetAverageTimeInit());
-        leto::graphics::DrawText(IScreen::ToHandle(&screen), position + offset + Point2_i{ name_offset, 0 }, txt, font, WhiteColor, BlackColor);
+        leto::graphics::DrawString(IScreen::ToHandle(&screen), position + offset + Point2_i{ name_offset, 0 }, txt, font, WhiteColor, BlackColor);
         break;
     }
     case 2:
     {
         char txt[64]{};
         leto::text::FormatText(txt, sizeof(txt), "{ #00ffff }p:{ # }%-5d", device->GetAverageTimePing()); // { #00ffff }i:{ # }%-5d
-        leto::graphics::DrawText(IScreen::ToHandle(&screen), position + offset + Point2_i{ name_offset, 0 }, txt, font, WhiteColor, BlackColor);
+        leto::graphics::DrawString(IScreen::ToHandle(&screen), position + offset + Point2_i{ name_offset, 0 }, txt, font, WhiteColor, BlackColor);
         break;
     }
     default:

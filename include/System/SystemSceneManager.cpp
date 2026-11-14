@@ -75,7 +75,7 @@ void SystemSceneManager::Draw(IScreen& screen)
 
 		static StaticText32 text{};
 		snprintf(text.CharPtr(), text.Capacity(), "%d", average_fps.Sum());
-		DrawFunctions::DrawText(screen, p, text, WhiteColor, BlackColor, false, &Default_Font_7x7_small);
+		DrawFunctions::DrawString(screen, p, text, WhiteColor, BlackColor, false, &Default_Font_7x7_small);
 
 		p.x += 24;
 

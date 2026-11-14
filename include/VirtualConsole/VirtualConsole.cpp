@@ -64,8 +64,8 @@ void VirtualConsole::Draw(IScreen &screen, Point2_i offset)
         size_t length;
         if (length = msg.text.TextLength())
         {
-            leto::graphics::DrawText(IScreen::ToHandle(&screen), point_txt, delim, font, msg.viewed ? DarkGrayColor : WhiteColor, BlackColor);
-            leto::graphics::DrawText(IScreen::ToHandle(&screen), point_txt + Point2_i{12, 0}, msg.text, font, msg.color, BlackColor);
+            leto::graphics::DrawString(IScreen::ToHandle(&screen), point_txt, delim, font, msg.viewed ? DarkGrayColor : WhiteColor, BlackColor);
+            leto::graphics::DrawString(IScreen::ToHandle(&screen), point_txt + Point2_i{12, 0}, msg.text, font, msg.color, BlackColor);
 
             line++;
         }
