@@ -490,6 +490,7 @@ static void DrawString(
 	size_t idx{};
 	int symbol{};
 
+    // TODO!!! Подумать норм ли это?? Что задаем одни коорданаты а фактически текст вылезает за них
     if (background.A)
         DrawRect(screen, x-1, y-1, GetTextWidth(text, length, font, style)+2, impl_font.GetHeight()+2, 0, background);
 
