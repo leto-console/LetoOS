@@ -111,21 +111,6 @@ elseif (${PRESET_DEFINE_MACRO} STREQUAL "__LINUX__")
     find_package(SDL2 REQUIRED CONFIG)
     target_link_libraries(${PROJECT_NAME} PUBLIC SDL2::SDL2)
 
-elseif (${PRESET_DEFINE_MACRO} STREQUAL "__TERMUX__")
-
-	include(FetchContent)
-	FetchContent_Declare(
-		cpp-httplib
-		GIT_REPOSITORY https://github.com/yhirose/cpp-httplib.git
-		GIT_TAG        v0.19.0
-	)
-	FetchContent_MakeAvailable(cpp-httplib)
-
-	set_target_properties("${PROJECT_NAME}" PROPERTIES POSITION_INDEPENDENT_CODE ON)
-
-	target_link_libraries(${PROJECT_NAME} PRIVATE httplib::httplib)
-	target_compile_features(${PROJECT_NAME} PRIVATE cxx_std_17)
-
 endif ()
 
 target_compile_definitions("${PROJECT_NAME}" PRIVATE LETO_OS_EXPORT_LIBRARY)
