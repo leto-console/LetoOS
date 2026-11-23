@@ -61,3 +61,18 @@ jobs:
         name: LetoOS-${{ matrix.preset }}
         path: dist/${{ matrix.preset }}/
         if-no-files-found: error
+
+  ci-result:
+    name: CI Result
+    if: always()
+    needs: [build-and-pack]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check all matrix jobs status
+        run: |
+          # Проверяем, что все джобы из needs завершились со статусом success
+          if [[ "${{ needs.build-and-pack.result }}" != "success" ]]; then
+            echo "❌ Один или несколько джобов матрицы завершились с ошибкой."
+            exit 1
+          fi
+          echo "✅ Все сборки и тесты успешно пройдены."
