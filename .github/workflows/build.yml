@@ -1,4 +1,4 @@
-name: Multi-Platform Build (STM32 & Windows)
+name: Multi-Platform Build (STM32, Windows & Linux)
 
 on:
   push:
@@ -62,16 +62,59 @@ jobs:
         path: dist/${{ matrix.preset }}/
         if-no-files-found: error
 
+  # 2. Сборка под Linux: проверяет ветку загрузчика на dlopen, которую
+  #    STM32 и Windows не компилируют вовсе
+  build-linux:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout LetoAPI
+      uses: actions/checkout@v4
+      with:
+        repository: leto-console/LetoAPI
+        path: leto/LetoAPI
+
+    - name: Checkout LetoCore
+      uses: actions/checkout@v4
+      with:
+        repository: leto-console/LetoCore
+        path: leto/LetoCore
+
+    - name: Checkout LetoOS
+      uses: actions/checkout@v4
+      with:
+        path: leto/LetoOS
+
+    - name: Install Dependencies (Linux)
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y ninja-build libsdl2-dev
+
+    - name: Configure and build
+      env:
+        LETO_PATH: ${{ github.workspace }}/leto/
+      run: |
+        set -e
+        for repo in LetoAPI LetoCore LetoOS; do
+          (cd "leto/$repo" && cmake --preset linux-debug && cmake --build --preset linux-debug)
+        done
+
+    - name: Test
+      env:
+        LETO_PATH: ${{ github.workspace }}/leto/
+      run: ctest --test-dir leto/LetoOS/build/linux-debug --output-on-failure
+
   ci-result:
     name: CI Result
     if: always()
-    needs: [build-and-pack]
+    needs: [build-and-pack, build-linux]
     runs-on: ubuntu-latest
     steps:
       - name: Check all matrix jobs status
         run: |
           # Проверяем, что все джобы из needs завершились со статусом success
-          if [[ "${{ needs.build-and-pack.result }}" != "success" ]]; then
+          if [[ "${{ needs.build-and-pack.result }}" != "success" ]] || \
+             [[ "${{ needs.build-linux.result }}" != "success" ]]; then
             echo "❌ Один или несколько джобов матрицы завершились с ошибкой."
             exit 1
           fi
