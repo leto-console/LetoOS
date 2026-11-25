@@ -115,6 +115,13 @@ endif ()
 
 target_compile_definitions("${PROJECT_NAME}" PRIVATE LETO_OS_EXPORT_LIBRARY)
 
+# Загрузчик ищет игры в <root>/Apps/<preset>/. Имя пресета нужно ему, чтобы
+# отличить каталог текущей сборки от общего Apps/.
+if(CMAKE_PRESET_NAME)
+        target_compile_definitions("${PROJECT_NAME}" PRIVATE
+                "LETO_PRESET_NAME=\"${CMAKE_PRESET_NAME}\"")
+endif()
+
 # ============================================= LetoAPI dependency ============================================
 
 if(DEFINED ENV{LETO_PATH})
