@@ -15,6 +15,10 @@ file(GLOB TEST_SOURCES
     "*/*.cpp"
 )
 
+# Fixtures/ собирается отдельной целью (см. ниже) и в исполняемый файл тестов
+# попадать не должен: его исходник задаёт видимость символа через GCC-атрибут.
+list(FILTER TEST_SOURCES EXCLUDE REGEX "/Fixtures/")
+
 # Создаём исполняемый файл с тестами
 add_executable(${PROJECT_NAME}_tests ${TEST_SOURCES})
 

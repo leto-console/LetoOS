@@ -1,3 +1,11 @@
+/*
+    Тест про Unix-загрузчик: сканирование ищет *.so и открывает файл через
+    dlopen. Под Windows каталог сканируется по *.dll и открывается через
+    LoadLibrary, поэтому здесь нечего проверять — и фикстура для него не
+    собирается (см. Tests/CMakeLists.txt).
+*/
+#if defined(__unix__) || defined(__APPLE__)
+
 #include <gtest/gtest.h>
 
 #include <AppLoader/AppLoader.hpp>
@@ -105,3 +113,5 @@ TEST_F(TestScanApps, RespectsAvailableSpace)
     EXPECT_EQ(ScanApps(apps, 0), 0u);
     EXPECT_LE(ScanApps(apps, 1), 1u);
 }
+
+#endif // defined(__unix__) || defined(__APPLE__)
