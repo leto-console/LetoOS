@@ -14,12 +14,19 @@ jobs:
         include:
           - preset: "stm32f401xc-debug"
             os: ubuntu-latest
+            test: false
           - preset: "stm32f411xe-debug"
             os: ubuntu-latest
+            test: false
           - preset: "win-debug"
             os: windows-latest
+            test: false
           - preset: "win-release"
             os: windows-latest
+            test: false
+          - preset: "linux-debug"
+            os: ubuntu-latest
+            test: true
     runs-on: ${{ matrix.os }}
 
     steps:
@@ -30,10 +37,10 @@ jobs:
       if: runner.os == 'Linux'
       run: |
         sudo apt-get update
-        sudo apt-get install -y ninja-build
+        sudo apt-get install -y ninja-build libsdl2-dev
 
     - name: Install Arm GNU Toolchain (Linux)
-      if: runner.os == 'Linux'
+      if: startsWith(matrix.preset, 'stm32')
       uses: carlosperate/arm-none-eabi-gcc-action@v1
       with:
         release: '14.2.Rel1'
@@ -52,6 +59,12 @@ jobs:
     - name: Build Firmware
       run: cmake --build --preset ${{ matrix.preset }}
 
+    # Сборка идёт без LETO_PATH: зависимости приходят через FetchContent из
+    # LetoCore и LetoAPI. Тесты есть только у не-STM32 пресетов.
+    - name: Run Tests
+      if: matrix.test
+      run: ctest --test-dir build/${{ matrix.preset }} --output-on-failure
+
     - name: Install and Organize SDK
       run: cmake --install build/${{ matrix.preset }} --prefix dist/${{ matrix.preset }}
 
@@ -62,59 +75,16 @@ jobs:
         path: dist/${{ matrix.preset }}/
         if-no-files-found: error
 
-  # 2. Сборка под Linux: проверяет ветку загрузчика на dlopen, которую
-  #    STM32 и Windows не компилируют вовсе
-  build-linux:
-    runs-on: ubuntu-latest
-
-    steps:
-    - name: Checkout LetoAPI
-      uses: actions/checkout@v4
-      with:
-        repository: leto-console/LetoAPI
-        path: leto/LetoAPI
-
-    - name: Checkout LetoCore
-      uses: actions/checkout@v4
-      with:
-        repository: leto-console/LetoCore
-        path: leto/LetoCore
-
-    - name: Checkout LetoOS
-      uses: actions/checkout@v4
-      with:
-        path: leto/LetoOS
-
-    - name: Install Dependencies (Linux)
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y ninja-build libsdl2-dev
-
-    - name: Configure and build
-      env:
-        LETO_PATH: ${{ github.workspace }}/leto/
-      run: |
-        set -e
-        for repo in LetoAPI LetoCore LetoOS; do
-          (cd "leto/$repo" && cmake --preset linux-debug && cmake --build --preset linux-debug)
-        done
-
-    - name: Test
-      env:
-        LETO_PATH: ${{ github.workspace }}/leto/
-      run: ctest --test-dir leto/LetoOS/build/linux-debug --output-on-failure
-
   ci-result:
     name: CI Result
     if: always()
-    needs: [build-and-pack, build-linux]
+    needs: [build-and-pack]
     runs-on: ubuntu-latest
     steps:
       - name: Check all matrix jobs status
         run: |
           # Проверяем, что все джобы из needs завершились со статусом success
-          if [[ "${{ needs.build-and-pack.result }}" != "success" ]] || \
-             [[ "${{ needs.build-linux.result }}" != "success" ]]; then
+          if [[ "${{ needs.build-and-pack.result }}" != "success" ]]; then
             echo "❌ Один или несколько джобов матрицы завершились с ошибкой."
             exit 1
           fi
