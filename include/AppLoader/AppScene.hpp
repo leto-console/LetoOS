@@ -15,8 +15,17 @@
 #include <GamesSupport/BaseGame.hpp>
 #include <AppLoader/AppInfo.hpp>
 
-// Путь до папки с игрой
-extern LETO_OS_EXPORT StaticText<128> AppPath;
+// Путь до папки с игрой. Совпадает с AppInfo::path: путь длиннее 127 символов
+// раньше обрезался молча.
+extern LETO_OS_EXPORT StaticText<260> AppPath;
+
+/**
+ * @brief Записать путь к игре в AppPath
+ *
+ * Путь, не влезающий в AppPath целиком, обрезается — сообщаем об этом в лог,
+ * иначе игра потом не найдётся по усечённому пути и причина будет не видна.
+ */
+extern LETO_OS_EXPORT void SetAppPath(const char* path);
 
 // Сцены выбора игры + обработки текущей запущенной игры
 class LETO_OS_EXPORT AppScene : public IScene

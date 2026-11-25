@@ -70,7 +70,7 @@ bool GameCenter::ProcessInput(const AppEvent& event)
 	}
 	else if (IsSystemEnterEvent(event) && games_menu.Count())
 	{
-		AppPath = games_menu.GetCurrentParam()->path;
+		SetAppPath(games_menu.GetCurrentParam()->path);
 		scene_manager->SwitchScene(app_scene_id);
 		return true;
 	}

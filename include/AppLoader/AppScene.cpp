@@ -4,10 +4,30 @@
 
 #include <AppLoader/AppLoader.hpp>
 #include <SceneManager/ISceneManager.hpp>
+#include <VirtualConsole/VirtualConsole.hpp>
 
 #include <LetoAPI_V1/Application/LetoApplication_V1.h>
 
-StaticText<128> AppPath;
+#include <cstring>
+
+StaticText<260> AppPath;
+
+void SetAppPath(const char* path)
+{
+    if (!path)
+    {
+        AppPath = "";
+        return;
+    }
+
+    AppPath = path;
+
+    // TextLength() упирается в Capacity() и на пути ровно по размеру, поэтому
+    // усечение определяется по исходной строке
+    if (strlen(path) > AppPath.Capacity())
+        VC_Printf("путь обрезан: %u\r\n", YellowColor,
+                static_cast<unsigned>(AppPath.Capacity()));
+}
 
 static uint8_t GameButtonIds[] = {
     SYSTEM_BTN_UP, SYSTEM_BTN_DOWN, SYSTEM_BTN_LEFT, SYSTEM_BTN_RIGHT, SYSTEM_BTN_ENTER, SYSTEM_BTN_ALT
