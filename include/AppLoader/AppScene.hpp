@@ -12,27 +12,22 @@
 #include <SceneManager/IScene.hpp>
 #include <SceneManager/ISceneBuilder.hpp>
 
-#include <GamesSupport/BaseGame.hpp>
-#include <AppLoader/AppInfo.hpp>
-
-// Путь до папки с игрой. Совпадает с AppInfo::path: путь длиннее 127 символов
-// раньше обрезался молча.
-extern LETO_OS_EXPORT StaticText<260> AppPath;
-
 /**
- * @brief Записать путь к игре в AppPath
- *
- * Путь, не влезающий в AppPath целиком, обрезается — сообщаем об этом в лог,
- * иначе игра потом не найдётся по усечённому пути и причина будет не видна.
+ * @brief Записать путь к текущему приложению
  */
 extern LETO_OS_EXPORT void SetAppPath(const char* path);
 
-// Сцены выбора игры + обработки текущей запущенной игры
+/**
+ * @brief Получить путь к текущему приложению
+ */
+extern LETO_OS_EXPORT StaticTextView GetAppPath();
+
+// Сцены выбора приложения + обработки текущего запущенного приложения
 class LETO_OS_EXPORT AppScene : public IScene
 {
 protected:
-	/// Проверить, что событие пользовательского ввода нужно отправлять в игру
-	bool IsInputForGame(const AppEvent& event);
+	/// Проверить, что событие пользовательского ввода нужно отправлять в приложение
+	bool IsInputForApp(const AppEvent& event);
 
 public:
 	AppScene(ISceneManager* scene_manager);

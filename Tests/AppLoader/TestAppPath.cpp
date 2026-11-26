@@ -10,14 +10,14 @@
 */
 TEST(TestAppPath, KeepsPathUpToCapacity)
 {
-    for (size_t length : {size_t{1}, size_t{127}, size_t{128}, AppPath.Capacity()})
+    for (size_t length : {size_t{1}, size_t{127}, size_t{128}, GetAppPath().Capacity()})
     {
         const std::string path(length, 'p');
 
         SetAppPath(path.c_str());
 
-        EXPECT_EQ(AppPath.TextLength(), length);
-        EXPECT_STREQ(AppPath.ConstChar(), path.c_str());
+        EXPECT_EQ(GetAppPath().TextLength(), length);
+        EXPECT_STREQ(GetAppPath().ConstChar(), path.c_str());
     }
 }
 
@@ -27,12 +27,12 @@ TEST(TestAppPath, KeepsPathUpToCapacity)
 */
 TEST(TestAppPath, TruncatesLongerPath)
 {
-    const std::string path(AppPath.Capacity() + 10, 'p');
+    const std::string path(GetAppPath().Capacity() + 10, 'p');
 
     SetAppPath(path.c_str());
 
-    EXPECT_EQ(AppPath.TextLength(), AppPath.Capacity());
-    EXPECT_EQ(AppPath[AppPath.Capacity()], '\0');
+    EXPECT_EQ(GetAppPath().TextLength(), GetAppPath().Capacity());
+    EXPECT_EQ(GetAppPath()[GetAppPath().Capacity()], '\0');
 }
 
 TEST(TestAppPath, EmptyPathIsCleared)
@@ -41,7 +41,7 @@ TEST(TestAppPath, EmptyPathIsCleared)
 
     SetAppPath("");
 
-    EXPECT_EQ(AppPath.TextLength(), 0u);
+    EXPECT_EQ(GetAppPath().TextLength(), 0u);
 }
 
 TEST(TestAppPath, NullPathIsCleared)
@@ -50,5 +50,5 @@ TEST(TestAppPath, NullPathIsCleared)
 
     SetAppPath(nullptr);
 
-    EXPECT_EQ(AppPath.TextLength(), 0u);
+    EXPECT_EQ(GetAppPath().TextLength(), 0u);
 }

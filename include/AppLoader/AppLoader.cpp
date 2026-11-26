@@ -13,14 +13,14 @@ AppInfo CurrentLoadedAppInfo = {};
 
 bool CheckGame(const char *path, AppInfo& info)
 {
-        AppBinHeader bin_info{};
+    AppBinHeader bin_info{};
 
     if (!GetBinary(path, &bin_info, sizeof(AppBinHeader))) return false;
 
     info.FromBinary(bin_info);
-        snprintf(info.path, sizeof(info.path), "%s", path);
+    snprintf(info.path, sizeof(info.path), "%s", path);
 
-        return true;
+    return true;
 }
 
 // ======================================================================
@@ -583,10 +583,10 @@ bool LoadApplication(const char *path)
     loadedLibraryPath = full_path;
 
     /*
-            Игра аллоцирует себя из общей арены хоста через LetoAPI, а её Clean()
-            объект не разрушает. Без откката по маркеру память не вернётся, если
-            сцена не переключится: SystemSceneManager::OnMenuDoubleClick как раз
-            выгружает игру без переключения сцены.
+        Игра аллоцирует себя из общей арены хоста через LetoAPI, а её Clean()
+        объект не разрушает. Без отката по маркеру память не вернётся, если
+        сцена не переключится: SystemSceneManager::OnMenuDoubleClick как раз
+        выгружает игру без переключения сцены.
     */
     arenaMarker = SystemSceneManager::Instance().GetCommonAllocator().Alloc(1);
 
@@ -626,8 +626,8 @@ void UnloadApplication()
     UnloadBinary();
 
     /*
-            Откат арены строго последним: Clear() обнуляет всё, что игра успела
-            выделить, включая объекты, на которые ещё ссылаются её же сцены.
+        Откат арены строго последним: Clear() обнуляет всё, что игра успела
+        выделить, включая объекты, на которые ещё ссылаются её же сцены.
     */
     if (arenaMarker)
     {
