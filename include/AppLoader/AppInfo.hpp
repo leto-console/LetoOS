@@ -36,6 +36,8 @@ struct AppInfo
 #ifdef __STM32__
 	char path[128] {};
 #else
+	/// TODO: перейти на std::string; выравнивание ArenaAllocator, мешавшее
+	/// переходу, исправлено в #115 — осталось изменение ABI структуры
 	char path[260] {};
 #endif
 
@@ -43,8 +45,8 @@ struct AppInfo
 	{
 		api_version = bin_info.api_version;
 		id = bin_info.id;
-		snprintf(en_name, sizeof(en_name), bin_info.en_name);
-		snprintf(ru_name, sizeof(ru_name), bin_info.ru_name);
+		snprintf(en_name, sizeof(en_name), "%s", bin_info.en_name);
+		snprintf(ru_name, sizeof(ru_name), "%s", bin_info.ru_name);
 	}
 };
 

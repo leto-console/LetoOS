@@ -12,18 +12,22 @@
 #include <SceneManager/IScene.hpp>
 #include <SceneManager/ISceneBuilder.hpp>
 
-#include <GamesSupport/BaseGame.hpp>
-#include <AppLoader/AppInfo.hpp>
+/**
+ * @brief Записать путь к текущему приложению
+ */
+extern LETO_OS_EXPORT void SetAppPath(const char* path);
 
-// Путь до папки с игрой
-extern LETO_OS_EXPORT StaticText<128> AppPath;
+/**
+ * @brief Получить путь к текущему приложению
+ */
+extern LETO_OS_EXPORT StaticTextView GetAppPath();
 
-// Сцены выбора игры + обработки текущей запущенной игры
+// Сцены выбора приложения + обработки текущего запущенного приложения
 class LETO_OS_EXPORT AppScene : public IScene
 {
 protected:
-	/// Проверить, что событие пользовательского ввода нужно отправлять в игру
-	bool IsInputForGame(const AppEvent& event);
+	/// Проверить, что событие пользовательского ввода нужно отправлять в приложение
+	bool IsInputForApp(const AppEvent& event);
 
 public:
 	AppScene(ISceneManager* scene_manager);

@@ -15,8 +15,28 @@ file(GLOB TEST_SOURCES
     "*/*.cpp"
 )
 
+# Fixtures/ собирается отдельной целью (см. ниже) и в исполняемый файл тестов
+# попадать не должен: его исходник задаёт видимость символа через GCC-атрибут.
+list(FILTER TEST_SOURCES EXCLUDE REGEX "/Fixtures/")
+
 # Создаём исполняемый файл с тестами
 add_executable(${PROJECT_NAME}_tests ${TEST_SOURCES})
+
+# Фикстура загрузчика: настоящая разделяемая библиотека с заголовком игры.
+# Отдельная цель, потому что тестам нужен реальный файл: сканирование открывает
+# его через dlopen, и подделать это без сборки нельзя.
+if (NOT ${PRESET_DEFINE_MACRO} STREQUAL "__STM32__" AND NOT ${PRESET_DEFINE_MACRO} STREQUAL "__WIN__")
+    add_library(TestGameFixture SHARED Fixtures/TestGameFixture.cpp)
+    target_link_libraries(TestGameFixture PRIVATE LetoAPI)
+    set_target_properties(TestGameFixture PROPERTIES
+        PREFIX "lib"
+        OUTPUT_NAME "TestGameFixture"
+        LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/fixtures"
+    )
+    add_dependencies(${PROJECT_NAME}_tests TestGameFixture)
+    target_compile_definitions(${PROJECT_NAME}_tests PRIVATE
+        "LETO_TEST_FIXTURE_DIR=\"${CMAKE_BINARY_DIR}/fixtures\"")
+endif()
 
 target_compile_definitions(${PROJECT_NAME}_tests PRIVATE LETO_API_V1_USE=0)
 target_compile_features(${PROJECT_NAME}_tests PRIVATE cxx_std_17)

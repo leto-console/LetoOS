@@ -1,4 +1,4 @@
-name: Multi-Platform Build (STM32 & Windows)
+name: Multi-Platform Build (STM32, Windows & Linux)
 
 on:
   push:
@@ -14,12 +14,19 @@ jobs:
         include:
           - preset: "stm32f401xc-debug"
             os: ubuntu-latest
+            test: false
           - preset: "stm32f411xe-debug"
             os: ubuntu-latest
+            test: false
           - preset: "win-debug"
             os: windows-latest
+            test: false
           - preset: "win-release"
             os: windows-latest
+            test: false
+          - preset: "linux-debug"
+            os: ubuntu-latest
+            test: true
     runs-on: ${{ matrix.os }}
 
     steps:
@@ -30,10 +37,10 @@ jobs:
       if: runner.os == 'Linux'
       run: |
         sudo apt-get update
-        sudo apt-get install -y ninja-build
+        sudo apt-get install -y ninja-build libsdl2-dev
 
     - name: Install Arm GNU Toolchain (Linux)
-      if: runner.os == 'Linux'
+      if: startsWith(matrix.preset, 'stm32')
       uses: carlosperate/arm-none-eabi-gcc-action@v1
       with:
         release: '14.2.Rel1'
@@ -51,6 +58,12 @@ jobs:
 
     - name: Build Firmware
       run: cmake --build --preset ${{ matrix.preset }}
+
+    # Сборка идёт без LETO_PATH: зависимости приходят через FetchContent из
+    # LetoCore и LetoAPI. Тесты есть только у не-STM32 пресетов.
+    - name: Run Tests
+      if: matrix.test
+      run: ctest --test-dir build/${{ matrix.preset }} --output-on-failure
 
     - name: Install and Organize SDK
       run: cmake --install build/${{ matrix.preset }} --prefix dist/${{ matrix.preset }}

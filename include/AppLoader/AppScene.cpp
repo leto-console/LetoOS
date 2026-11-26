@@ -4,20 +4,47 @@
 
 #include <AppLoader/AppLoader.hpp>
 #include <SceneManager/ISceneManager.hpp>
+#include <VirtualConsole/VirtualConsole.hpp>
 
 #include <LetoAPI_V1/Application/LetoApplication_V1.h>
 
-StaticText<128> AppPath;
+#include <cstring>
 
-static uint8_t GameButtonIds[] = {
+// Путь до папки с игрой. Совпадает с AppInfo::path: путь длиннее 127 символов
+// раньше обрезался молча.
+static StaticText<260> AppPath;
+
+void SetAppPath(const char* path)
+{
+    if (!path)
+    {
+        AppPath = "";
+        return;
+    }
+
+    AppPath = path;
+
+    // TextLength() упирается в Capacity() и на пути ровно по размеру, поэтому
+    // усечение определяется по исходной строке
+    if (strlen(path) > AppPath.Capacity())
+        VC_Printf("путь обрезан: %u\r\n", YellowColor,
+                static_cast<unsigned>(AppPath.Capacity()));
+}
+
+StaticTextView GetAppPath()
+{
+    return AppPath;
+}
+
+static uint8_t AppButtonIds[] = {
     SYSTEM_BTN_UP, SYSTEM_BTN_DOWN, SYSTEM_BTN_LEFT, SYSTEM_BTN_RIGHT, SYSTEM_BTN_ENTER, SYSTEM_BTN_ALT
 };
 
-bool AppScene::IsInputForGame(const AppEvent &event)
+bool AppScene::IsInputForApp(const AppEvent &event)
 {
 	if (event.source == AE_Button)
 	{
-		for (uint8_t id : GameButtonIds)
+		for (uint8_t id : AppButtonIds)
 		{
 			if (event.id == id) 
 				return true;
@@ -70,7 +97,7 @@ void AppScene::Loop()
         app->Loop();
         if (app->GetStatus() != LETO_V1_WORK_STATUS)
         {
-            // ... + некоторые действия при завершении игры
+            // ... + некоторые действия при завершении приложения
             UnloadApplication();
             scene_manager->Return();
         }
@@ -79,7 +106,7 @@ void AppScene::Loop()
 
 bool AppScene::ProcessInput(const AppEvent &event)
 {
-    if (!CurrentLoadedApp || !IsInputForGame(event))
+    if (!CurrentLoadedApp || !IsInputForApp(event))
         return true;
 
     // Think about switch-case
